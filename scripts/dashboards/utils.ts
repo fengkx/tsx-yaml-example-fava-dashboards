@@ -1,6 +1,6 @@
 type IPanelType = "html" | "echarts" | "d3_sankey" | "jinja2";
 
-type IBaseQueryType = { bql: string;[k: string]: any };
+type IBaseQueryType = { bql: string; [k: string]: any };
 
 type IPanelCommon<QueryType extends IBaseQueryType = IBaseQueryType> = {
   title: string;
@@ -24,14 +24,14 @@ type IEchartsPanel = IPanelCommon & {
 };
 
 type ID3SankeyPanel = IPanelCommon & {
-  type: 'd3_sankey';
-  script: string
-}
+  type: "d3_sankey";
+  script: string;
+};
 
 type IJinja2Panel = IPanelCommon & {
-  type: 'jinja2';
-  template: string
-}
+  type: "jinja2";
+  template: string;
+};
 
 type IPanel = IHtmlPanel | IEchartsPanel | ID3SankeyPanel | IJinja2Panel;
 type IDashboard = {
@@ -39,11 +39,15 @@ type IDashboard = {
   panels: IPanel[];
 };
 
-export function DashBoards(props: { children?: MarkAsChildren<IDashboard, 'panels'>[] }) {
+export function DashBoards(
+  props: { children?: MarkAsChildren<IDashboard, "panels">[] },
+) {
   return { dashboards: props.children ?? [] };
 }
 
-export function DashBoard({ name, children }: MarkAsChildren<IDashboard, 'panels'>) {
+export function DashBoard(
+  { name, children }: MarkAsChildren<IDashboard, "panels">,
+) {
   return {
     name,
     panels: children,
@@ -51,10 +55,13 @@ export function DashBoard({ name, children }: MarkAsChildren<IDashboard, 'panels
 }
 
 type ToArray<T extends unknown> = T extends unknown[] ? T : T[];
-type MarkAsChildren<T, K extends keyof T> = Omit<T, K> & { children?: ToArray<T[K]> }
+type MarkAsChildren<T, K extends keyof T> = Omit<T, K> & {
+  children?: ToArray<T[K]>;
+};
 
-type PanelParams = IPanel['type'] extends 'jinja2' ? MarkAsChildren<IPanel, 'template'> : MarkAsChildren<IPanel, 'script'>;
-
+type PanelParams = IPanel["type"] extends "jinja2"
+  ? MarkAsChildren<IPanel, "template">
+  : MarkAsChildren<IPanel, "script">;
 
 export function Panel(panel: PanelParams) {
   const r: IPanel = {
@@ -62,23 +69,23 @@ export function Panel(panel: PanelParams) {
     queries: panel.queries,
     type: panel.type,
     script: (panel.children ?? []).join(""),
-    template: ''
+    template: "",
   };
-  if (panel.type === 'jinja2') {
-    delete r['script'];
-    r.template = (panel.children ?? []).join('')
+  if (panel.type === "jinja2") {
+    delete r["script"];
+    r.template = (panel.children ?? []).join("");
   }
   if (panel.width) {
-    r.width = panel.width
+    r.width = panel.width;
   }
   if (panel.link) {
-    r.link = panel.link
+    r.link = panel.link;
   }
   if (panel.height) {
-    r.height = panel.height
+    r.height = panel.height;
   }
 
-  return r
+  return r;
 }
 
 const getFunctionBody = (fn: any) => {
@@ -87,7 +94,7 @@ const getFunctionBody = (fn: any) => {
     return fnStr.replace(/^function\s*\S+\s*\([^)]*\)\s*\{|\}$/g, "");
   }
   const matches = fnStr.match(
-    /^(?:\s*\(?(?:\s*\w*\s*,?\s*)*\)?\s*?=>\s*){?([\s\S]*)}?$/
+    /^(?:\s*\(?(?:\s*\w*\s*,?\s*)*\)?\s*?=>\s*){?([\s\S]*)}?$/,
   );
   if (!matches) {
     return null;
@@ -96,33 +103,36 @@ const getFunctionBody = (fn: any) => {
   const firstPass = matches[1];
 
   // Needed because the RegExp doesn't handle the last '}'.
-  const secondPass =
-    (firstPass.match(/{/g) || []).length ===
+  const secondPass = (firstPass.match(/{/g) || []).length ===
       (firstPass.match(/}/g) || []).length - 1
-      ? firstPass.slice(0, firstPass.lastIndexOf("}"))
-      : firstPass;
+    ? firstPass.slice(0, firstPass.lastIndexOf("}"))
+    : firstPass;
 
   return secondPass;
 };
 
-export const convertCurrency = (ammountPart: string, currencies: string[], datePart?: string) => {
+export const convertCurrency = (
+  ammountPart: string,
+  currencies: string[],
+  datePart?: string,
+) => {
   let r = ammountPart;
   for (const currency of currencies) {
-    r = `CONVERT(${r}, '${currency}'`
+    r = `CONVERT(${r}, '${currency}'`;
     if (datePart) {
-      r = `${r}, ${datePart})`
+      r = `${r}, ${datePart})`;
     } else {
-      r = `${r})`
+      r = `${r})`;
     }
   }
   return r;
-}
+};
 
 export type ScriptFunction<T extends IBaseQueryType = IBaseQueryType> = (
-  ledger: any,// { ccy: string },
-  panel: { queries: T[], [k: string]: any },
+  ledger: any, // { ccy: string },
+  panel: { queries: T[]; [k: string]: any },
   utis: any,
-  window: typeof globalThis
+  window: typeof globalThis,
 ) => string | object;
 
 export function Script(props: { fn: ScriptFunction }) {

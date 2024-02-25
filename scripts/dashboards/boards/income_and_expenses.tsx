@@ -9,13 +9,12 @@ const averageIncomeScript = (ledger, panel, helpers, window) => {
     currency: ledger.ccy,
     maximumFractionDigits: 0,
   });
-  const days =
-    (new Date(ledger.dateLast) - new Date(ledger.dateFirst)) /
+  const days = (new Date(ledger.dateLast) - new Date(ledger.dateFirst)) /
       (1000 * 60 * 60 * 24) +
     1;
   const months = days / (365 / 12);
   const value = currencyFormat.format(
-    -panel.queries[0].result[0].value[ledger.ccy] / months
+    -panel.queries[0].result[0].value[ledger.ccy] / months,
   );
   return `<div style="font-size: 40px; font-weight: bold; color: #3daf46; text-align: center;">${value}</div>`;
 };
@@ -32,7 +31,7 @@ const averageExpenseScript = (ledger, panel) => {
     1;
   const months = days / (365 / 12);
   const value = currencyFormat.format(
-    panel.queries[0].result[0].value[ledger.ccy] / months
+    panel.queries[0].result[0].value[ledger.ccy] / months,
   );
   return `<div style="font-size: 40px; font-weight: bold; color: #af3d3d; text-align: center;">${value}</div>`;
 };
@@ -213,9 +212,8 @@ export const income_and_expenses = (
             style: "percent",
             maximumFractionDigits: 0,
           });
-          const days =
-            (Number(new Date(ledger.dateLast)) -
-              Number(new Date(ledger.dateFirst))) /
+          const days = (Number(new Date(ledger.dateLast)) -
+                Number(new Date(ledger.dateFirst))) /
               (1000 * 60 * 60 * 24) +
             1;
           const months = days / (365 / 12);
@@ -223,9 +221,11 @@ export const income_and_expenses = (
           const expenses = panel.queries[1].result[0].value[ledger.ccy];
           const rate = (income - expenses) / months;
           const ratePercent = 1 - expenses / income;
-          const value = `${currencyFormat.format(rate)} (${percentFormat.format(
-            ratePercent
-          )})`;
+          const value = `${currencyFormat.format(rate)} (${
+            percentFormat.format(
+              ratePercent,
+            )
+          })`;
           return `<div style="font-size: 40px; font-weight: bold; color: #3daf46; text-align: center;">${value}</div>`;
         }}
       />
@@ -258,16 +258,15 @@ export const income_and_expenses = (
             currency: ledger.ccy,
             maximumFractionDigits: 0,
           });
-          const days =
-            (Number(new Date(ledger.dateLast)) -
-              Number(new Date(ledger.dateFirst))) /
+          const days = (Number(new Date(ledger.dateLast)) -
+                Number(new Date(ledger.dateFirst))) /
               (1000 * 60 * 60 * 24) +
             1;
           const divisor = days / (365 / 12);
           const accountTree = helpers.buildAccountTree(
             panel.queries[0].result,
             (row) => -row.value[ledger.ccy] / divisor,
-            (parts, i) => parts[i]
+            (parts, i) => parts[i],
           );
           // use click event on desktop, dblclick on mobile
           const clickEvt = window.screen.width < 800 ? "onDblClick" : "onClick";
@@ -288,8 +287,8 @@ export const income_and_expenses = (
               },
             ],
             [clickEvt]: (event) => {
-              const account =
-                "Income" + event.treePathInfo.map((i) => i.name).join(":");
+              const account = "Income" +
+                event.treePathInfo.map((i) => i.name).join(":");
               const time =
                 new URLSearchParams(window.location.search).get("time") ?? "";
               const link = panel.queries[0].link
@@ -330,9 +329,8 @@ export const income_and_expenses = (
             currency: ledger.ccy,
             maximumFractionDigits: 0,
           });
-          const days =
-            (Number(new Date(ledger.dateLast)) -
-              Number(new Date(ledger.dateFirst))) /
+          const days = (Number(new Date(ledger.dateLast)) -
+                Number(new Date(ledger.dateFirst))) /
               (1000 * 60 * 60 * 24) +
             1;
           const divisor = days / (365 / 12);
@@ -340,7 +338,7 @@ export const income_and_expenses = (
           const accountTree = helpers.buildAccountTree(
             panel.queries[0].result,
             (row) => row.value[ledger.ccy] / divisor,
-            (parts, i) => parts[i]
+            (parts, i) => parts[i],
           );
           accountTree.children[0].children.forEach((secondLevel) => {
             if (secondLevel.children.length > 0) {
@@ -369,8 +367,8 @@ export const income_and_expenses = (
               },
             ],
             [clickEvt]: (event) => {
-              const account =
-                "Expenses" + event.treePathInfo.map((i) => i.name).join(":");
+              const account = "Expenses" +
+                event.treePathInfo.map((i) => i.name).join(":");
               const time =
                 new URLSearchParams(window.location.search).get("time") ?? "";
               const link = panel.queries[0].link

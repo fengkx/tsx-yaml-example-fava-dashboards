@@ -13,11 +13,13 @@ export const traveling = (
       queries={[
         {
           bql: `
-        SELECT year, ${convertCurrency(
-          "SUM(position)",
-          ["USD", "HKD", "{{ledger.ccy}}"],
-          "LAST(date)"
-        )} AS value
+        SELECT year, ${
+            convertCurrency(
+              "SUM(position)",
+              ["USD", "HKD", "{{ledger.ccy}}"],
+              "LAST(date)",
+            )
+          } AS value
               WHERE account ~ '^Expenses:' AND ('travel' IN tags OR account ~ '^Expenses:Travel')
               GROUP BY year
         `,
@@ -74,13 +76,16 @@ export const traveling = (
       link={`/${mainTitle}/income_statement/?filter=any(account:"^Expenses:Travel.*"),#travel`}
       queries={[
         {
-          link: `/${mainTitle}/income_statement/?filter=any(account:"^Expenses:Travel.*"),#travel`,
+          link:
+            `/${mainTitle}/income_statement/?filter=any(account:"^Expenses:Travel.*"),#travel`,
           bql: `
-        SELECT year, tags, ${convertCurrency("position", [
-          "USD",
-          "HKD",
-          "{{ledger.ccy}}",
-        ])} AS value
+        SELECT year, tags, ${
+            convertCurrency("position", [
+              "USD",
+              "HKD",
+              "{{ledger.ccy}}",
+            ])
+          } AS value
         WHERE account ~ '^Expenses:' AND ('travel' IN tags OR account ~ '^Expenses:Travel')
         ORDER BY date, tags DESC
         `,

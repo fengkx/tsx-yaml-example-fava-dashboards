@@ -73,15 +73,14 @@ export const sankey = (
 
           const accountTree = helpers.buildAccountTree(
             panel.queries[0].result,
-            (row) => row.value[ledger.ccy]
+            (row) => row.value[ledger.ccy],
           );
           addNode(accountTree.children[0]);
           addNode(accountTree.children[1]);
 
-          const savings =
-            accountTree.children[0].name === "Income"
-              ? -accountTree.children[0].value - accountTree.children[1].value
-              : -accountTree.children[1].value - accountTree.children[0].value;
+          const savings = accountTree.children[0].name === "Income"
+            ? -accountTree.children[0].value - accountTree.children[1].value
+            : -accountTree.children[1].value - accountTree.children[0].value;
           if (savings > 0) {
             nodes.push({ name: "Savings" });
             links.push({

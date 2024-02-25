@@ -23,9 +23,11 @@ const assetScript: b.ScriptFunction = (ledger, panel) => {
       formatter: (params) =>
         `${params.marker} ${
           ledger.commodities[params.name]?.meta.name ?? params.name
-        } <span style="padding-left: 15px; font-weight: bold;">${currencyFormat.format(
-          params.value
-        )}</span> (${params.percent.toFixed(0)}%)`,
+        } <span style="padding-left: 15px; font-weight: bold;">${
+          currencyFormat.format(
+            params.value,
+          )
+        }</span> (${params.percent.toFixed(0)}%)`,
     },
     series: [
       {
@@ -156,8 +158,8 @@ const portfolioGain: b.ScriptFunction = (ledger, panel, helpers, window) => {
 
   // the beancount query only returns months where there was at least one matching transaction, therefore we group by month
   for (let row of panel.queries[0].result) {
-    amounts[`${row.month}/${row.year}`] =
-      row.market_value[ledger.ccy] - row.book_value[ledger.ccy];
+    amounts[`${row.month}/${row.year}`] = row.market_value[ledger.ccy] -
+      row.book_value[ledger.ccy];
   }
 
   return {
@@ -234,11 +236,11 @@ const calasses: b.ScriptFunction = (ledger, panel, helpers, window) => {
     totalValue,
     tooltip: {
       formatter: (params) =>
-        `${params.marker} ${
-          params.name
-        } <span style="padding-left: 15px; font-weight: bold;">${currencyFormat.format(
-          params.value
-        )}</span> (${((params.value / totalValue) * 100).toFixed(0)}%)`,
+        `${params.marker} ${params.name} <span style="padding-left: 15px; font-weight: bold;">${
+          currencyFormat.format(
+            params.value,
+          )
+        }</span> (${((params.value / totalValue) * 100).toFixed(0)}%)`,
     },
     legend: {
       orient: "vertical",
@@ -279,7 +281,8 @@ export const assetBoard = (
       type="echarts"
       queries={[
         {
-          bql: String.raw`SELECT UNITS(SUM(position)) as units, CONVERT(SUM(position), '{{ledger.ccy}}') as market_value
+          bql: String
+            .raw`SELECT UNITS(SUM(position)) as units, CONVERT(SUM(position), '{{ledger.ccy}}') as market_value
           WHERE account_sortkey(account) ~ '^[01]'
           GROUP BY currency, cost_currency
           ORDER BY market_value`,
@@ -297,7 +300,7 @@ export const assetBoard = (
       queries={[
         {
           /**
-           * 
+           *
           Workaround for getting the last day of a given month:
           YMONTH(date) returns a date instance of 1st of the given month and year
           adding 31 days gives us the next month (unless it's e.g. Jan 31... this case should be avoided by using FIRST(date))
@@ -325,16 +328,20 @@ export const assetBoard = (
           bql: String.raw`
         SELECT year, month,
               
-        ${convertCurrency(
-          "LAST(balance)",
-          ["USD", "HKD", "CNY"],
-          "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)"
-        )} AS market_value,
-        ${convertCurrency(
-          "COST(LAST(balance))",
-          ["USD", "HKD", "CNY"],
-          "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)"
-        )} AS book_value
+        ${
+            convertCurrency(
+              "LAST(balance)",
+              ["USD", "HKD", "CNY"],
+              "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)",
+            )
+          } AS market_value,
+        ${
+            convertCurrency(
+              "COST(LAST(balance))",
+              ["USD", "HKD", "CNY"],
+              "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)",
+            )
+          } AS book_value
               WHERE account ~ '^Assets:Stock' OR account ~ '^Assets:Funds' OR account ~ '^Assets:Cryptos'
               GROUP BY year, month
               `,
@@ -354,16 +361,20 @@ export const assetBoard = (
           bql: String.raw`
         SELECT year, month,
               
-        ${convertCurrency(
-          "LAST(balance)",
-          ["USD", "HKD", "CNY"],
-          "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)"
-        )} AS market_value,
-        ${convertCurrency(
-          "COST(LAST(balance))",
-          ["USD", "HKD", "CNY"],
-          "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)"
-        )} AS book_value
+        ${
+            convertCurrency(
+              "LAST(balance)",
+              ["USD", "HKD", "CNY"],
+              "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)",
+            )
+          } AS market_value,
+        ${
+            convertCurrency(
+              "COST(LAST(balance))",
+              ["USD", "HKD", "CNY"],
+              "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)",
+            )
+          } AS book_value
               WHERE account ~ '^Assets:Stock' OR account ~ '^Assets:Funds' OR account ~ '^Assets:Cryptos'
               GROUP BY year, month
               `,
@@ -384,11 +395,13 @@ export const assetBoard = (
           bql: String.raw`
         SELECT UNITS(SUM(position)) as units,
               
-        ${convertCurrency("SUM(position)", [
-          "USD",
-          "HKD",
-          "CNY",
-        ])} AS market_value
+        ${
+            convertCurrency("SUM(position)", [
+              "USD",
+              "HKD",
+              "CNY",
+            ])
+          } AS market_value
         WHERE account_sortkey(account) ~ '^[01]' 
         AND NOT currency='CNY'
         GROUP BY currency
@@ -407,7 +420,7 @@ export const assetBoard = (
           name: "Cash",
           bql: createClassifyBql(
             ["Assets:Bank", "Assets:AliPay", "Assets:WechatPay"],
-            "CNY"
+            "CNY",
           ),
         },
         {
@@ -427,7 +440,7 @@ export const assetBoard = (
 
 function createClassifyBql(
   accountPrefix: string | string[],
-  currency: string
+  currency: string,
 ): string {
   accountPrefix = Array.isArray(accountPrefix)
     ? accountPrefix

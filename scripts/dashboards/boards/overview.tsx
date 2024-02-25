@@ -34,7 +34,8 @@ export const overViewBoard = (
       type="html"
       queries={[
         {
-          bql: "SELECT CONVERT(CONVERT(CONVERT(SUM(position), 'USD'), 'HKD'), 'CNY') AS value WHERE account ~ '^Assets:'",
+          bql:
+            "SELECT CONVERT(CONVERT(CONVERT(SUM(position), 'USD'), 'HKD'), 'CNY') AS value WHERE account ~ '^Assets:'",
         },
       ]}
     >
@@ -49,7 +50,8 @@ export const overViewBoard = (
       type="html"
       queries={[
         {
-          bql: "SELECT CONVERT(CONVERT(CONVERT(SUM(position), 'USD'), 'HKD'), 'CNY') AS value WHERE account ~ '^Assets:' AND NOT account  ~ '^Assets:Limit';",
+          bql:
+            "SELECT CONVERT(CONVERT(CONVERT(SUM(position), 'USD'), 'HKD'), 'CNY') AS value WHERE account ~ '^Assets:' AND NOT account  ~ '^Assets:Limit';",
         },
       ]}
     >
@@ -63,7 +65,8 @@ export const overViewBoard = (
       link={`/${mainTitle}/balance_sheet/`}
       queries={[
         {
-          bql: "SELECT CONVERT(SUM(position), '{{ledger.ccy}}') AS value WHERE account ~ '^Liabilities:'",
+          bql:
+            "SELECT CONVERT(SUM(position), '{{ledger.ccy}}') AS value WHERE account ~ '^Liabilities:'",
         },
       ]}
     >
@@ -78,31 +81,39 @@ export const overViewBoard = (
         {
           name: "Income",
           stack: "income",
-          bql: "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE account ~ '^Income:' AND NOT 'pretax' IN tags\nGROUP BY year, month\n",
+          bql:
+            "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE account ~ '^Income:' AND NOT 'pretax' IN tags\nGROUP BY year, month\n",
           link: `/${mainTitle}/account/Income/?time={time}`,
         },
         {
           name: "Housing",
           stack: "expenses",
-          bql: "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE account ~ '^Expenses:House:' AND NOT 'travel' IN tags\nGROUP BY year, month\n",
-          link: `/${mainTitle}/account/Expenses:Housing/?filter=-#travel&time={time}`,
+          bql:
+            "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE account ~ '^Expenses:House:' AND NOT 'travel' IN tags\nGROUP BY year, month\n",
+          link:
+            `/${mainTitle}/account/Expenses:Housing/?filter=-#travel&time={time}`,
         },
         {
           name: "Food",
           stack: "expenses",
-          bql: "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE account ~ '^Expenses:Food:' AND NOT 'travel' IN tags\nGROUP BY year, month\n",
-          link: `/${mainTitle}/account/Expenses:Food/?filter=-#travel&time={time}`,
+          bql:
+            "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE account ~ '^Expenses:Food:' AND NOT 'travel' IN tags\nGROUP BY year, month\n",
+          link:
+            `/${mainTitle}/account/Expenses:Food/?filter=-#travel&time={time}`,
         },
         {
           name: "Shopping",
           stack: "expenses",
-          bql: "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE account ~ '^Expenses:Shopping:' AND NOT 'travel' IN tags\nGROUP BY year, month\n",
-          link: `/${mainTitle}/account/Expenses:Shopping/?filter=-#travel&time={time}`,
+          bql:
+            "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE account ~ '^Expenses:Shopping:' AND NOT 'travel' IN tags\nGROUP BY year, month\n",
+          link:
+            `/${mainTitle}/account/Expenses:Shopping/?filter=-#travel&time={time}`,
         },
         {
           name: "Travel",
           stack: "expenses",
-          bql: "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE (account ~ '^Expenses:' AND 'travel' IN tags) OR (account ~ '^Expenses:Travel')\nGROUP BY year, month\n",
+          bql:
+            "SELECT year, month, CONVERT(SUM(position), '{{ledger.ccy}}', LAST(date)) AS value\nWHERE (account ~ '^Expenses:' AND 'travel' IN tags) OR (account ~ '^Expenses:Travel')\nGROUP BY year, month\n",
           link: `/${mainTitle}/account/Expenses/?filter=#travel&time={time}`,
         },
         {
@@ -113,7 +124,8 @@ export const overViewBoard = (
 WHERE account ~ '^Expenses:' AND NOT account ~ '^Expenses:(Housing|Food|Shopping):' AND NOT 'travel' IN tags AND NOT 'pretax' IN tags
 GROUP BY year, month
           `,
-          link: `/${mainTitle}/account/Expenses/?filter=all(-account:"^Expenses:(Housing|Food|Shopping)") -#travel -#pretax`,
+          link:
+            `/${mainTitle}/account/Expenses/?filter=all(-account:"^Expenses:(Housing|Food|Shopping)") -#travel -#pretax`,
         },
       ]}
     >
@@ -163,7 +175,7 @@ GROUP BY year, month
             })),
             onClick: (event) => {
               const query = panel.queries.find(
-                (q) => q.name === event.seriesName
+                (q) => q.name === event.seriesName,
               );
               if (query) {
                 const [month, year] = event.name.split("/");

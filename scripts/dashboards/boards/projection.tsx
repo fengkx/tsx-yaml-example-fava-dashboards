@@ -30,13 +30,12 @@ const projectionScript: b.ScriptFunction = (ledger, panel, helpers, window) => {
     new Date(
       resultsEx[resultsEx.length - 1].year,
       resultsEx[resultsEx.length - 1].month,
-      1
-    ).getTime() - 1
+      1,
+    ).getTime() - 1,
   );
-  const days =
-    (Number(dateLast) - Number(dateFirst)) / (1000 * 60 * 60 * 24) + 1;
-  const totalDiff =
-    resultsEx[resultsEx.length - 1].value[ledger.ccy] -
+  const days = (Number(dateLast) - Number(dateFirst)) / (1000 * 60 * 60 * 24) +
+    1;
+  const totalDiff = resultsEx[resultsEx.length - 1].value[ledger.ccy] -
     resultsEx[0].value[ledger.ccy];
   const monthlyDiff = (totalDiff / days) * (365 / 12);
 
@@ -52,7 +51,7 @@ const projectionScript: b.ScriptFunction = (ledger, panel, helpers, window) => {
     .iterateMonths(dateFirstStr, dateProjectUntilStr)
     .map((m) => `${m.month}/${m.year}`);
   const lastMonthIdx = months.findIndex(
-    (m) => m === `${dateLastMonth}/${dateLastYear}`
+    (m) => m === `${dateLastMonth}/${dateLastYear}`,
   );
 
   const projection = [];
@@ -126,11 +125,13 @@ export const projection = (
         {
           bql: `
             SELECT year, month,
-              ${b.convertCurrency(
-                "LAST(balance)",
-                ["USD", "HKD", "{{ledger.ccy}}"],
-                "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)"
-              )} AS value
+              ${
+            b.convertCurrency(
+              "LAST(balance)",
+              ["USD", "HKD", "{{ledger.ccy}}"],
+              "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)",
+            )
+          } AS value
               WHERE account_sortkey(account) ~ '^[01]'
               GROUP BY year, month
               ORDER BY year, month`,
@@ -139,11 +140,13 @@ export const projection = (
         {
           bql: `
             SELECT year, month,
-            ${b.convertCurrency(
+            ${
+            b.convertCurrency(
               "LAST(balance)",
               ["USD", "HKD", "{{ledger.ccy}}"],
-              "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)"
-            )}
+              "DATE_ADD(YMONTH(DATE_ADD(YMONTH(FIRST(date)), 31)), -1)",
+            )
+          }
                AS value
               WHERE
                 account_sortkey(account) ~ '^[01]' 
